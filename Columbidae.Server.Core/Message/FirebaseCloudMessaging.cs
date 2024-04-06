@@ -1,13 +1,14 @@
 using FirebaseAdmin;
 using FirebaseAdmin.Messaging;
 using Google.Apis.Auth.OAuth2;
-using Lagrange.Core.Message;
+using CMsg = Columbidae.Message.Message;
 
 namespace Columbidae.Server.Core.Message;
 
 public class FirebaseCloudMessaging : IBroadcast
 {
-    private readonly FirebaseMessaging _messaging;
+    private readonly FirebaseMessaging _fcm;
+
     public FirebaseCloudMessaging(string projectId, GoogleCredential? credential = null)
     {
         var app = FirebaseApp.Create(new AppOptions
@@ -15,10 +16,10 @@ public class FirebaseCloudMessaging : IBroadcast
             Credential = credential ?? GoogleCredential.GetApplicationDefault(),
             ProjectId = projectId
         });
-        _messaging = FirebaseMessaging.GetMessaging(app);
+        _fcm = FirebaseMessaging.GetMessaging(app);
     }
 
-    public async Task OnMessage(MessageChain chain, DateTime time)
+    public async Task OnMessage(CMsg msg, DateTime time)
     {
         
     }

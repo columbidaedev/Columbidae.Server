@@ -1,8 +1,8 @@
-using Lagrange.Core.Message;
+using CMsg = Columbidae.Message.Message;
 
 namespace Columbidae.Server.Core.Message;
 
 public interface IBroadcast
 {
-    Task OnMessage(MessageChain chain, DateTime time);
+    Task OnMessage(CMsg msg, DateTime time);
 }

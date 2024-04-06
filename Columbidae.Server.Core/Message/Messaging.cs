@@ -49,7 +49,7 @@ public class Messaging
 
         _bot.Invoker.OnFriendMessageReceived += async (_, @event) =>
         {
-            await Task.WhenAll(Broadcasts.GetAll().Select(b => b.OnMessage(@event.Chain, @event.EventTime)));
+            await Task.WhenAll(Broadcasts.GetAll().Select(b => b.OnMessage(@event.Chain.ToCMsg(), @event.EventTime)));
         };
 
         if (_library.Preferences.Value.ShowBotLog)
