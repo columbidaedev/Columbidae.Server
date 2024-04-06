@@ -5,7 +5,7 @@ using Lagrange.Core.Utility.Sign;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json.Linq;
 
-namespace Columbidae.Server;
+namespace Columbidae.Server.Core.Bot;
 
 internal class LinuxSigner : SignProvider
 {

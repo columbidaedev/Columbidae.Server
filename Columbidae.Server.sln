@@ -1,6 +1,8 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Columbidae.Server", "Columbidae.Server.csproj", "{F96B2CDC-CFF9-4C3F-B041-660008DDC510}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Columbidae.Server.Core", "Columbidae.Server.Core\Columbidae.Server.Core.csproj", "{5A813B84-BEC9-487A-AC6E-287C29EBCCB5}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Columbidae.Server", "Columbidae.Server\Columbidae.Server.csproj", "{9D4CCB8C-7A90-4695-9C2F-6FA282C6430B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -8,9 +10,13 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{F96B2CDC-CFF9-4C3F-B041-660008DDC510}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{F96B2CDC-CFF9-4C3F-B041-660008DDC510}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{F96B2CDC-CFF9-4C3F-B041-660008DDC510}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{F96B2CDC-CFF9-4C3F-B041-660008DDC510}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5A813B84-BEC9-487A-AC6E-287C29EBCCB5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5A813B84-BEC9-487A-AC6E-287C29EBCCB5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5A813B84-BEC9-487A-AC6E-287C29EBCCB5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5A813B84-BEC9-487A-AC6E-287C29EBCCB5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9D4CCB8C-7A90-4695-9C2F-6FA282C6430B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9D4CCB8C-7A90-4695-9C2F-6FA282C6430B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9D4CCB8C-7A90-4695-9C2F-6FA282C6430B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9D4CCB8C-7A90-4695-9C2F-6FA282C6430B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

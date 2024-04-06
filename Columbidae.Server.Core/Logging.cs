@@ -1,7 +1,7 @@
 using Microsoft.Extensions.Logging;
 using LagrangeLogLevel = Lagrange.Core.Event.EventArg.LogLevel;
 
-namespace Columbidae.Server;
+namespace Columbidae.Server.Core;
 
 public class Logging
 {
@@ -13,8 +13,8 @@ public class Logging
         Delegated = loggerFactory.CreateLogger(categoryName);
     }
 
-    private static readonly Logging Instance = new Logging();
-    public static ILogger Logger => Instance.Delegated;
+    public static Logging Default { get; } = new();
+    public static ILogger Logger => Default.Delegated;
 }
 
 public static class LogConvert

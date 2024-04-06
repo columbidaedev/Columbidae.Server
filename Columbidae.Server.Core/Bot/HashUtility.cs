@@ -2,9 +2,9 @@ using System.Globalization;
 using System.Security.Cryptography;
 using System.Text;
 
-namespace Columbidae.Server;
+namespace Columbidae.Server.Core.Bot;
 
-public static class HashUtility
+internal static class HashUtility
 {
     public static string Md5(this byte[] bytes)
     {
