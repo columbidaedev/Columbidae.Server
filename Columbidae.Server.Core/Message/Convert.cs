@@ -98,7 +98,9 @@ public static class Convert
         return new VideoFrame
         {
             Width = (uint)entity.Size.X,
-            Height = (uint)entity.Size.Y
+            Height = (uint)entity.Size.Y,
+            Size = (uint)entity.VideoSize,
+            Url = entity.VideoUrl
         };
     }
 
