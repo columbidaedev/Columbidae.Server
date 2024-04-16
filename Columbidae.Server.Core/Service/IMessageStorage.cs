@@ -9,5 +9,5 @@ public interface IMessageStorage : IRegisterable
 {
     public Task<CMsg?> GetMessage(ulong id);
     public Task<bool> StreamResource(IAsyncStreamWriter<Chunk> writer, ulong frameId, ResourceType type);
-    public Task<bool> SaveMessage();
+    public Task<bool> SaveMessage(CMsg message);
 }

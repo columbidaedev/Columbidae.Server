@@ -1,5 +1,5 @@
 using Columbidae.Auth;
-using Columbidae.Server.Core.Context;
+using Columbidae.Server.Core.Registry;
 using Grpc.Core;
 using NanoidDotNet;
 using Authentication = Columbidae.Auth.Authentication;
@@ -19,7 +19,7 @@ public class AuthService : Authentication.AuthenticationBase
     public override async Task RequestLogin(AuthParams request, IServerStreamWriter<AuthResult> responseStream,
         ServerCallContext context)
     {
-        var authorized = await _context.HasAuthorizedDevice(request.AuthToken);
+        var authorized = await _context.AuthenticationStorages.HasAuthorizedDevice(request.AuthToken);
         var unauthorized = _unauthorizedDevices.ContainsKey(request.AuthToken);
         if (!authorized && !unauthorized)
         {
@@ -51,7 +51,7 @@ public class AuthService : Authentication.AuthenticationBase
             if (!authorized)
             {
                 var device = _unauthorizedDevices[request.AuthToken];
-                await _context.AddAuthorizedDevice(request.AuthToken, device);
+                await _context.AuthenticationStorages.AddAuthorizedDevice(request.AuthToken, device);
                 _unauthorizedDevices.Remove(request.AuthToken);
             }
 

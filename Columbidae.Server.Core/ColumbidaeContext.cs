@@ -2,7 +2,6 @@ using System.Diagnostics;
 using System.Globalization;
 using System.Threading.Channels;
 using Columbidae.Server.Core.Bot;
-using Columbidae.Server.Core.Context;
 using Columbidae.Server.Core.Message;
 using Columbidae.Server.Core.PersistentStorage;
 using Columbidae.Server.Core.PersistentStorage.Models;
@@ -27,6 +26,7 @@ public class ColumbidaeContext
     private readonly ILibrary _library;
     private readonly IContainer _container;
     private readonly WebApplication _app;
+
     private readonly Channel<string> _loginUrlChan = Channel.CreateBounded<string>(new BoundedChannelOptions(1)
     {
         SingleWriter = true,
@@ -74,6 +74,7 @@ public class ColumbidaeContext
 
         _bot.Invoker.OnFriendMessageReceived += async (_, @event) =>
         {
+            MessageStorages.SaveMessage(@event.Chain.ToCMsg());
             await Task.WhenAll(
                 Broadcasts.GetAll().Select(b => b.OnMessage(@event.Chain.ToCMsg(), @event.EventTime)));
         };

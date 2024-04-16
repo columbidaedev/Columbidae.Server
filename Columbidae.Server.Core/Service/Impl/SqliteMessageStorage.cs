@@ -1,5 +1,6 @@
 using Columbidae.Message;
 using Grpc.Core;
+using CMsg = Columbidae.Message.Message;
 
 namespace Columbidae.Server.Core.Service.Impl;
 
@@ -8,7 +9,7 @@ public class SqliteMessageStorage : IMessageStorage
     public bool IsAvailable() => true;
     public int GetPriority() => 0;
 
-    public Task<Columbidae.Message.Message?> GetMessage(ulong id)
+    public Task<CMsg?> GetMessage(ulong id)
     {
         throw new NotImplementedException();
     }
@@ -18,7 +19,7 @@ public class SqliteMessageStorage : IMessageStorage
         throw new NotImplementedException();
     }
 
-    public Task<bool> SaveMessage()
+    public async Task<bool> SaveMessage(CMsg message)
     {
         throw new NotImplementedException();
     }

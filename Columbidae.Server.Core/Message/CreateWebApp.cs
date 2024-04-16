@@ -1,13 +1,11 @@
 using System.Net;
-using Columbidae.Server.Core.Message;
 using Columbidae.Server.Core.PersistentStorage.Models;
-using Columbidae.Server.Core.Service;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Server.Kestrel.Core;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace Columbidae.Server.Core.Context;
+namespace Columbidae.Server.Core.Message;
 
 public static class CreateWebApp
 {
