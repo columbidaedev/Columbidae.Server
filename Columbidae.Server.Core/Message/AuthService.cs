@@ -47,7 +47,7 @@ public class AuthService : Authentication.AuthenticationBase
         }
         else
         {
-            var url = await _context.LoginUrlChannel.ReadAsync();
+            var url = await _context.Bot.LoginUrl.ReadAsync();
             if (!authorized)
             {
                 var device = _unauthorizedDevices[request.AuthToken];
