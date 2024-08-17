@@ -27,11 +27,11 @@ public class Library : ILibrary
     }
 
 
-    public ReadWriteDelegate<AccountModel?> AccountDelegate
+    public ReadWriteDelegate<AccountModel> AccountDelegate
     {
         get
         {
-            var deg = new InherentReadWrite<AccountModel?, PreferencesModel>(
+            var deg = new InherentReadWrite<AccountModel, PreferencesModel>(
                 delegated: new MemoryReadIoWriteDelegate<PreferencesModel>(Preferences),
                 getter: pref => pref.Account,
                 setter: account =>
@@ -40,7 +40,7 @@ public class Library : ILibrary
                     return Preferences.Value;
                 }
             );
-            return new ReadWriteDelegate<AccountModel?>(deg);
+            return new ReadWriteDelegate<AccountModel>(deg);
         }
     }
 

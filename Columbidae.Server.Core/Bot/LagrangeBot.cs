@@ -22,7 +22,7 @@ public class LagrangeBot : IBot
     private readonly Logging _logging = new("LagrangeBot");
     private readonly BotContext _bot;
     private readonly ReadWriteDelegate<BotModel> _botDelegate;
-    private readonly ReadWriteDelegate<AccountModel?> _accountDelegate;
+    private readonly ReadWriteDelegate<AccountModel> _accountDelegate;
     private readonly string _cacheRoot;
 
     private readonly Channel<string> _loginUrlChan = Channel.CreateBounded<string>(new BoundedChannelOptions(1)
@@ -32,7 +32,7 @@ public class LagrangeBot : IBot
     });
 
     public LagrangeBot(string cacheRoot, ReadWriteDelegate<BotModel> botDelegate,
-        ReadWriteDelegate<AccountModel?> accountDelegate)
+        ReadWriteDelegate<AccountModel> accountDelegate)
     {
         Enum.TryParse(botDelegate.Value.Protocol, true, out Protocols botProtocol);
         _bot = BotFactory.Create(
@@ -65,6 +65,10 @@ public class LagrangeBot : IBot
             _botDelegate.Value.Keystore = _bot.UpdateKeystore();
             await _botDelegate.Write();
             _logging.Delegated.LogDebug("Bot updated keystore");
+
+            var model = _accountDelegate.Value;
+            model.Uin = _bot.BotUin;
+            await _accountDelegate.Write(model);
         };
 
         _bot.Invoker.OnFriendMessageReceived += async (_, @event) =>
@@ -81,7 +85,7 @@ public class LagrangeBot : IBot
         };
 
         var account = _accountDelegate.Value;
-        if (account != null && _botDelegate.Value.Keystore?.Uin == account.Uin)
+        if (account.Uin != 0 && _botDelegate.Value.Keystore?.Uin == account.Uin)
         {
             var succeeded = await _bot.LoginByPassword();
             if (!succeeded)
