@@ -1,5 +1,3 @@
-using Columbidae.Server.Core;
-using Columbidae.Server.Core.Message;
 using Columbidae.Server.Core.PersistentStorage;
 using Columbidae.Server.Core.PersistentStorage.Models;
 using Columbidae.Server.Core.Registry;
@@ -25,14 +23,9 @@ public static class StorageRegisterer
         }
     }
 
-    private static IAuthenticationStorage? _parse(DatabaseModel model)
+    private static SqliteAuthStorage? _parse(DatabaseModel model)
     {
-        if (model.SqlitePath != null)
-        {
-            return new SqliteAuthStorage(model.SqlitePath);
-        }
-
-        return null;
+        return model.SqlitePath != null ? new SqliteAuthStorage(model.SqlitePath) : null;
     }
 
     private static IAuthenticationStorage _useDefault(IContainer container)

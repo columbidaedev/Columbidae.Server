@@ -9,7 +9,7 @@
 
     <ItemGroup>
         <PackageReference Include="Directories.Net" Version="1.0.0" />
-        <PackageReference Include="Lagrange.Core" Version="0.2.1" />
+        <PackageReference Include="Lagrange.Core" Version="0.3.0" />
     </ItemGroup>
 
     <ItemGroup>

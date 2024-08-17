@@ -1,5 +1,3 @@
-using Columbidae.Server.Core;
-using Columbidae.Server.Core.Message;
 using Columbidae.Server.Core.PersistentStorage.Models;
 using Columbidae.Server.Core.Registry;
 using Columbidae.Server.Core.Service;
