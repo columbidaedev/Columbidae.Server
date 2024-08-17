@@ -4,18 +4,20 @@ using Newtonsoft.Json;
 
 namespace Columbidae.Server.PersistentStorage;
 
-public class JsonReadWrite<T> : IReadWrite<T> where T : class, new()
+public class JsonReadWrite<T>(string filePath) : IFileReadWrite<T> where T : class, new()
 {
-    public T Read(string filepath)
+    public string FilePath => filePath;
+
+    public T Read()
     {
         T? value;
-        if (File.Exists(filepath))
+        if (File.Exists(filePath))
         {
-            var text = File.OpenText(filepath);
+            var text = File.OpenText(filePath);
             value = JsonConvert.DeserializeObject<T>(text.ReadToEnd());
             if (value == null)
             {
-                throw new SerializationException($"Illegal JSON format: {filepath}");
+                throw new SerializationException($"Illegal JSON format: {filePath}");
             }
         }
         else
@@ -26,10 +28,10 @@ public class JsonReadWrite<T> : IReadWrite<T> where T : class, new()
         return value;
     }
 
-    public async Task Write(string filepath, T value)
+    public async Task Write(T value)
     {
         var json = JsonConvert.SerializeObject(value);
-        await using var text = new StreamWriter(filepath);
+        await using var text = new StreamWriter(filePath);
         await text.WriteAsync(json);
         text.Close();
     }

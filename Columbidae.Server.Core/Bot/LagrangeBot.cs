@@ -3,6 +3,7 @@ using System.Globalization;
 using System.Threading.Channels;
 using Columbidae.Server.Core.Message;
 using Columbidae.Server.Core.PersistentStorage;
+using Columbidae.Server.Core.PersistentStorage.Models;
 using Columbidae.Server.Core.Registry;
 using Lagrange.Core;
 using Lagrange.Core.Common;
@@ -20,7 +21,8 @@ public class LagrangeBot : IBot
 
     private readonly Logging _logging = new("LagrangeBot");
     private readonly BotContext _bot;
-    private readonly ILibrary _library;
+    private readonly ReadWriteDelegate<BotModel> _botDelegate;
+    private readonly ReadWriteDelegate<AccountModel?> _accountDelegate;
     private readonly string _cacheRoot;
 
     private readonly Channel<string> _loginUrlChan = Channel.CreateBounded<string>(new BoundedChannelOptions(1)
@@ -29,20 +31,22 @@ public class LagrangeBot : IBot
         SingleReader = false,
     });
 
-    public LagrangeBot(string cacheRoot, ILibrary library)
+    public LagrangeBot(string cacheRoot, ReadWriteDelegate<BotModel> botDelegate,
+        ReadWriteDelegate<AccountModel?> accountDelegate)
     {
-        Enum.TryParse(library.Preferences.Value.Bot.Protocol, true, out Protocols botProtocol);
-        _library = library;
+        Enum.TryParse(botDelegate.Value.Protocol, true, out Protocols botProtocol);
         _bot = BotFactory.Create(
             new BotConfig
             {
                 Protocol = botProtocol,
-                CustomSignProvider = new LinuxSigner(library.Preferences.Value.SignServer)
+                CustomSignProvider = new LinuxSigner(botDelegate.Value.SignServer)
             },
-            library.Preferences.Value.Device.ToDeviceInfo(),
-            library.Keystore.Value
+            botDelegate.Value.Device.ToDeviceInfo(),
+            botDelegate.Value.Keystore ?? new BotKeystore()
         );
         _cacheRoot = cacheRoot;
+        _botDelegate = botDelegate;
+        _accountDelegate = accountDelegate;
     }
 
     public async Task Login()
@@ -58,8 +62,8 @@ public class LagrangeBot : IBot
             _logging.Delegated.LogInformation("Bot online at {login time}",
                 ev.EventTime.ToString(CultureInfo.CurrentCulture));
 
-            _library.Keystore.Value = _bot.UpdateKeystore();
-            await _library.Keystore.Write();
+            _botDelegate.Value.Keystore = _bot.UpdateKeystore();
+            await _botDelegate.Write();
             _logging.Delegated.LogDebug("Bot updated keystore");
         };
 
@@ -70,17 +74,14 @@ public class LagrangeBot : IBot
                 Context.Broadcasts.GetAll().Select(b => b.OnMessage(@event.Chain.ToCMsg(), @event.EventTime)));
         };
 
-        if (_library.Preferences.Value.ShowBotLog)
+        _bot.Invoker.OnBotLogEvent += (_, @event) =>
         {
-            _bot.Invoker.OnBotLogEvent += (_, @event) =>
-            {
-                _logging.Delegated.Log(logLevel: @event.Level.ToMsLevel(), eventId: new EventId(),
-                    message: @event.EventMessage);
-            };
-        }
+            _logging.Delegated.Log(logLevel: @event.Level.ToMsLevel(), eventId: new EventId(),
+                message: @event.EventMessage);
+        };
 
-        var account = _library.Preferences.Value.Account;
-        if (account != null && _library.Keystore.Value.Uin == account.Uin)
+        var account = _accountDelegate.Value;
+        if (account != null && _botDelegate.Value.Keystore?.Uin == account.Uin)
         {
             var succeeded = await _bot.LoginByPassword();
             if (!succeeded)
@@ -105,12 +106,9 @@ public class LagrangeBot : IBot
         else
         {
             var qrCodeFile = Path.Combine(_cacheRoot, "login_qr_code.png");
-            if (_library.Preferences.Value.ShowBotLog)
-            {
-                await File.WriteAllBytesAsync(qrCodeFile, login.Value.QrCode);
-                _logging.Delegated.LogDebug("Login QR code saved to {qr code filepath}", qrCodeFile);
-                _logging.Delegated.LogInformation("Waiting for logging in...");
-            }
+            await File.WriteAllBytesAsync(qrCodeFile, login.Value.QrCode);
+            _logging.Delegated.LogDebug("Login QR code saved to {qr code filepath}", qrCodeFile);
+            _logging.Delegated.LogInformation("Waiting for logging in...");
 
             Process.Start(new ProcessStartInfo(qrCodeFile)
             {

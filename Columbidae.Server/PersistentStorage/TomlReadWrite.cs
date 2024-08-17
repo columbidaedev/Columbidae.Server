@@ -3,8 +3,11 @@ using Tomlyn;
 
 namespace Columbidae.Server.PersistentStorage;
 
-public class TomlReadWrite<T> : IReadWrite<T> where T : class, new()
+public class TomlReadWrite<T>(string filePath) : IFileReadWrite<T>
+    where T : class, new()
 {
+    public string FilePath => filePath;
+
     private readonly TomlModelOptions _tomlOptions = new()
     {
         ConvertToModel = (o, type) =>
@@ -20,12 +23,12 @@ public class TomlReadWrite<T> : IReadWrite<T> where T : class, new()
     };
 
 
-    public T Read(string filepath)
+    public T Read()
     {
         T value;
-        if (File.Exists(filepath))
+        if (File.Exists(filePath))
         {
-            using var textStream = File.OpenText(filepath);
+            using var textStream = File.OpenText(filePath);
             value = Toml.ToModel<T>(textStream.ReadToEnd(), options: _tomlOptions);
         }
         else
@@ -36,10 +39,11 @@ public class TomlReadWrite<T> : IReadWrite<T> where T : class, new()
         return value;
     }
 
-    public async Task Write(string filepath, T value)
+    public async Task Write(T value)
     {
-        await using var file = new StreamWriter(filepath);
+        await using var file = new StreamWriter(filePath);
         await file.WriteAsync(Toml.FromModel(value, options: _tomlOptions));
         file.Close();
     }
+
 }
