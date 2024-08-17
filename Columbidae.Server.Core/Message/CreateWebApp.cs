@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Server.Kestrel.Core;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 
 namespace Columbidae.Server.Core.Message;
 
@@ -14,6 +15,7 @@ public static class CreateWebApp
         var listen = server.Listen?.Split(":") ?? [];
 
         var appBuilder = WebApplication.CreateBuilder();
+        appBuilder.Logging.SetMinimumLevel(Logging.LogLevel);
         appBuilder.Services.AddGrpc();
         appBuilder.Services.AddSingleton(context);
         appBuilder.WebHost.ConfigureKestrel(options =>

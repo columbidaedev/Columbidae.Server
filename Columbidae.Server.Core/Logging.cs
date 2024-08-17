@@ -5,15 +5,26 @@ namespace Columbidae.Server.Core;
 
 public class Logging
 {
-    public ILogger Delegated { get; private set; }
+    public readonly ILogger Delegated;
+
+    private static LogLevel _logLevel = LogLevel.Debug;
+    public static LogLevel LogLevel
+    {
+        get => _logLevel;
+        set
+        {
+            _logLevel = value;
+            Default = new Logging();
+        }
+    }
 
     public Logging(string categoryName = "Program")
     {
-        using var loggerFactory = LoggerFactory.Create(builder => builder.AddConsole().SetMinimumLevel(LogLevel.Debug));
+        using var loggerFactory = LoggerFactory.Create(builder => builder.AddConsole().SetMinimumLevel(LogLevel));
         Delegated = loggerFactory.CreateLogger(categoryName);
     }
-
-    public static Logging Default { get; } = new();
+    
+    public static Logging Default { get; private set;  } = new();
     public static ILogger Logger => Default.Delegated;
 }
 
