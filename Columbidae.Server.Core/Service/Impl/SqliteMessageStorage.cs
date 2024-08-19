@@ -4,7 +4,7 @@ using CMsg = Columbidae.Message.Message;
 
 namespace Columbidae.Server.Core.Service.Impl;
 
-public class SqliteMessageStorage : IMessageStorage
+public class SqliteMessageStorage(string dbPath) : IMessageStorage
 {
     public bool IsAvailable() => true;
     public int GetPriority() => 0;

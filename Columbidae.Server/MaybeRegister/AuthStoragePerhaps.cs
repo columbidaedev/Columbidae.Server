@@ -6,7 +6,7 @@ using Columbidae.Server.Core.Service.Impl;
 
 namespace Columbidae.Server.MaybeRegister;
 
-public static class StorageRegisterer
+public static class AuthStoragePerhaps
 {
     public static void RegisterOrUseSqlite(this Registry<IAuthenticationStorage> registry, DatabaseModel? model,
         IContainer container)
