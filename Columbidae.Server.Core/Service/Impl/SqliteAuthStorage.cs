@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Columbidae.Server.Core.Service.Impl;
 
-public class SqliteAuthStorage(string dbPath) : IAuthenticationStorage
+public class SqliteAuthStorage(string dbPath) : IAuthenticationStorage, IDisposable
 {
     public bool IsAvailable() => true;
 
@@ -47,5 +47,10 @@ public class SqliteAuthStorage(string dbPath) : IAuthenticationStorage
     {
         await _dbContext.Devices.Where(d => d.Token == token).ExecuteDeleteAsync();
         await _dbContext.SaveChangesAsync();
+    }
+
+    public void Dispose()
+    {
+        _dbContext.Dispose();
     }
 }

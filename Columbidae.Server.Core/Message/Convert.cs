@@ -1,19 +1,41 @@
-using Columbidae.Message;
-using Lagrange.Core.Message;
-using Lagrange.Core.Message.Entity;
-
 namespace Columbidae.Server.Core.Message;
 
+using Columbidae.Message;
+using Google.Protobuf.WellKnownTypes;
+using Lagrange.Core.Message;
+using Lagrange.Core.Message.Entity;
 using CMsg = Columbidae.Message.Message;
+using CMsgType = Columbidae.Message.Message.Types.MessageType;
 
 public static class Convert
 {
     public static CMsg ToCMsg(this MessageChain chain)
     {
-        return new CMsg
+        var msg = new CMsg
         {
             Id = chain.MessageId,
-            Frames = { chain.Select(ToFrame) }
+            Frames = { chain.Select(ToFrame) },
+            Time = Timestamp.FromDateTime(chain.Time),
+            Type = chain.Type.ToCMsgType(),
+            Sender = chain.FriendUin,
+            Destination = chain.TargetUin,
+        };
+        if (chain.GroupUin.HasValue)
+        {
+            msg.Group = chain.GroupUin.Value;
+        }
+
+        return msg;
+    }
+
+    public static CMsgType ToCMsgType(this MessageChain.MessageType type)
+    {
+        return type switch
+        {
+            MessageChain.MessageType.Group => CMsgType.Group,
+            MessageChain.MessageType.Temp => CMsgType.Temp,
+            MessageChain.MessageType.Friend => CMsgType.Friend,
+            _ => throw new ArgumentOutOfRangeException(nameof(type), type, null)
         };
     }
 
@@ -114,86 +136,19 @@ public static class Convert
 
     public static Frame ToFrame(this IMessageEntity entity)
     {
-        if (entity is FaceEntity face)
+        return entity switch
         {
-            return new Frame
-            {
-                Emoji = face.ToEmojiFrame()
-            };
-        }
-
-        if (entity is ForwardEntity forward)
-        {
-            return new Frame
-            {
-                Reply = forward.ToReplyFrame()
-            };
-        }
-
-        if (entity is FileEntity file)
-        {
-            return new Frame
-            {
-                File = file.ToFileFrame()
-            };
-        }
-
-        if (entity is ImageEntity image)
-        {
-            return new Frame
-            {
-                Image = image.ToImageFrame()
-            };
-        }
-
-        if (entity is JsonEntity json)
-        {
-            return new Frame
-            {
-                Json = json.ToJsonFrame()
-            };
-        }
-
-        if (entity is MentionEntity mention)
-        {
-            return new Frame
-            {
-                Mention = mention.ToMentionFrame()
-            };
-        }
-
-        if (entity is MultiMsgEntity multi)
-        {
-            return new Frame
-            {
-                Forward = multi.ToForwardFrame()
-            };
-        }
-
-        if (entity is TextEntity text)
-        {
-            return new Frame
-            {
-                Text = text.ToTextFrame()
-            };
-        }
-
-        if (entity is VideoEntity video)
-        {
-            return new Frame
-            {
-                Video = video.ToVideoFrame()
-            };
-        }
-
-        if (entity is XmlEntity xml)
-        {
-            return new Frame
-            {
-                Xml = xml.ToXmlFrame()
-            };
-        }
-
-        throw new NotImplementedException($"Type {entity.GetType().Name} is not supported");
+            FaceEntity face => new Frame { Emoji = face.ToEmojiFrame() },
+            ForwardEntity forward => new Frame { Reply = forward.ToReplyFrame() },
+            FileEntity file => new Frame { File = file.ToFileFrame() },
+            ImageEntity image => new Frame { Image = image.ToImageFrame() },
+            JsonEntity json => new Frame { Json = json.ToJsonFrame() },
+            MentionEntity mention => new Frame { Mention = mention.ToMentionFrame() },
+            MultiMsgEntity multi => new Frame { Forward = multi.ToForwardFrame() },
+            TextEntity text => new Frame { Text = text.ToTextFrame() },
+            VideoEntity video => new Frame { Video = video.ToVideoFrame() },
+            XmlEntity xml => new Frame { Xml = xml.ToXmlFrame() },
+            _ => throw new NotImplementedException($"Type {entity.GetType().Name} is not supported")
+        };
     }
 }
