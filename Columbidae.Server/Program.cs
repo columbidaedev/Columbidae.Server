@@ -8,7 +8,7 @@ var container = new Container();
 var library = new Library(container);
 if (!library.Preferences.Value.Verbose)
 {
-    Logging.LogLevel = LogLevel.Critical;
+    Logging.LogLevel = LogLevel.Information;
 }
 
 var bot = new LagrangeBot(container.CacheRoot, library.BotDelegate, library.AccountDelegate);
