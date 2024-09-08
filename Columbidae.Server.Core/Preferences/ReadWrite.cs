@@ -1,4 +1,4 @@
-namespace Columbidae.Server.Core.PersistentStorage;
+namespace Columbidae.Server.Core.Preferences;
 
 public class ReadWriteDelegate<T> : IReadWrite<T>
 {

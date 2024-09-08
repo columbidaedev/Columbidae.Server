@@ -7,6 +7,6 @@ public interface IBot
     public bool Online { get; }
     public ColumbidaeContext? Context { set; }
     public ChannelReader<string> LoginUrl { get; }
-    public Task Login();
+    public Task Initialize();
     public Task Shutdown();
 }

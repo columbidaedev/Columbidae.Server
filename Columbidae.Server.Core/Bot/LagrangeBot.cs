@@ -2,8 +2,9 @@ using System.Diagnostics;
 using System.Globalization;
 using System.Threading.Channels;
 using Columbidae.Server.Core.Message;
-using Columbidae.Server.Core.PersistentStorage;
 using Columbidae.Server.Core.PersistentStorage.Models;
+using Columbidae.Server.Core.Preferences;
+using Columbidae.Server.Core.Preferences.Models;
 using Columbidae.Server.Core.Registry;
 using Lagrange.Core;
 using Lagrange.Core.Common;
@@ -49,7 +50,7 @@ public class LagrangeBot : IBot
         _accountDelegate = accountDelegate;
     }
 
-    public async Task Login()
+    public async Task Initialize()
     {
         if (Online)
         {

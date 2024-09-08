@@ -1,6 +1,6 @@
 using Lagrange.Core.Common;
 
-namespace Columbidae.Server.Core.PersistentStorage.Models;
+namespace Columbidae.Server.Core.Preferences.Models;
 
 public class DeviceModel
 {

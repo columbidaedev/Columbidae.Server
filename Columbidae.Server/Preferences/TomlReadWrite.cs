@@ -1,7 +1,7 @@
-using Columbidae.Server.Core.PersistentStorage;
+using Columbidae.Server.Core.Preferences;
 using Tomlyn;
 
-namespace Columbidae.Server.PersistentStorage;
+namespace Columbidae.Server.Preferences;
 
 public class TomlReadWrite<T>(string filePath) : IFileReadWrite<T>
     where T : class, new()

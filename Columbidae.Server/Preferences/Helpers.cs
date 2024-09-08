@@ -1,6 +1,6 @@
-using Columbidae.Server.Core.PersistentStorage;
+using Columbidae.Server.Core.Preferences;
 
-namespace Columbidae.Server.PersistentStorage;
+namespace Columbidae.Server.Preferences;
 
 public class InherentReadWrite<T, TK>(IReadWrite<TK> delegated, Func<TK, T> getter, Func<T, TK> setter) : IReadWrite<T>
 {

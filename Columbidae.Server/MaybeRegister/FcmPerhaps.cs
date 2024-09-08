@@ -1,4 +1,5 @@
 using Columbidae.Server.Core.PersistentStorage.Models;
+using Columbidae.Server.Core.Preferences.Models;
 using Columbidae.Server.Core.Registry;
 using Columbidae.Server.Core.Service;
 using Columbidae.Server.Core.Service.Impl;

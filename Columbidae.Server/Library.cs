@@ -1,6 +1,8 @@
 using Columbidae.Server.Core.PersistentStorage;
 using Columbidae.Server.Core.PersistentStorage.Models;
-using Columbidae.Server.PersistentStorage;
+using Columbidae.Server.Core.Preferences;
+using Columbidae.Server.Core.Preferences.Models;
+using Columbidae.Server.Preferences;
 
 namespace Columbidae.Server;
 

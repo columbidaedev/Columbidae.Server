@@ -1,6 +1,7 @@
 using Columbidae.Server.Core.Bot;
 using Columbidae.Server.Core.Message;
 using Columbidae.Server.Core.PersistentStorage.Models;
+using Columbidae.Server.Core.Preferences.Models;
 using Columbidae.Server.Core.Registry;
 using Columbidae.Server.Core.Service;
 using Microsoft.AspNetCore.Builder;
@@ -29,7 +30,7 @@ public class ColumbidaeContext
     public async Task Login()
     {
         _logging.Delegated.LogInformation("Signing into {bot}", Bot.GetType().Name);
-        await Bot.Login();
+        await Bot.Initialize();
     }
 
     public async Task Run()

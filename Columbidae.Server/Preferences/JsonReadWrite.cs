@@ -1,8 +1,8 @@
 using System.Runtime.Serialization;
-using Columbidae.Server.Core.PersistentStorage;
+using Columbidae.Server.Core.Preferences;
 using Newtonsoft.Json;
 
-namespace Columbidae.Server.PersistentStorage;
+namespace Columbidae.Server.Preferences;
 
 public class JsonReadWrite<T>(string filePath) : IFileReadWrite<T> where T : class, new()
 {

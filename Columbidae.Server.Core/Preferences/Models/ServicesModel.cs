@@ -1,3 +1,5 @@
+using Columbidae.Server.Core.Preferences.Models;
+
 namespace Columbidae.Server.Core.PersistentStorage.Models;
 
 public class ServicesModel
