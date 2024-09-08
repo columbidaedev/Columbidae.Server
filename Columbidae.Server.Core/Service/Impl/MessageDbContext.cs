@@ -44,7 +44,10 @@ public abstract class MessageDbContext : DbContext
         public ulong DestinationId { get; set; }
         public ulong? GroupId { get; set; }
 
-        public IEnumerable<Frame> GetFrames() => Frames.Select(store => store.ToFrame());
+        public IEnumerable<Frame> GetFrames()
+        {
+            return Frames.Select(store => store.ToFrame());
+        }
 
         public CMsg ToMessage()
         {
@@ -57,10 +60,7 @@ public abstract class MessageDbContext : DbContext
                 Destination = DestinationId,
                 Frames = { GetFrames() }
             };
-            if (GroupId.HasValue)
-            {
-                cmsg.Group = GroupId.Value;
-            }
+            if (GroupId.HasValue) cmsg.Group = GroupId.Value;
 
             return cmsg;
         }

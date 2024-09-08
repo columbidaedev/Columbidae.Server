@@ -15,10 +15,7 @@ public class JsonReadWrite<T>(string filePath) : IFileReadWrite<T> where T : cla
         {
             var text = File.OpenText(filePath);
             value = JsonConvert.DeserializeObject<T>(text.ReadToEnd());
-            if (value == null)
-            {
-                throw new SerializationException($"Illegal JSON format: {filePath}");
-            }
+            if (value == null) throw new SerializationException($"Illegal JSON format: {filePath}");
         }
         else
         {

@@ -6,10 +6,7 @@ using Microsoft.Extensions.Logging;
 
 var container = new Container();
 var library = new Library(container);
-if (!library.Preferences.Value.Verbose)
-{
-    Logging.LogLevel = LogLevel.Information;
-}
+if (!library.Preferences.Value.Verbose) Logging.LogLevel = LogLevel.Information;
 
 var bot = new LagrangeBot(container.CacheRoot, library.BotDelegate, library.AccountDelegate);
 var messaged = new ColumbidaeContext(library.Preferences.Value.Server, bot);

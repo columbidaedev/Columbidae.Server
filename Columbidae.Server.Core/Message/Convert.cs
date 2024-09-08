@@ -1,9 +1,10 @@
-namespace Columbidae.Server.Core.Message;
-
 using Columbidae.Message;
 using Google.Protobuf.WellKnownTypes;
 using Lagrange.Core.Message;
 using Lagrange.Core.Message.Entity;
+
+namespace Columbidae.Server.Core.Message;
+
 using CMsg = Columbidae.Message.Message;
 using CMsgType = Columbidae.Message.Message.Types.MessageType;
 
@@ -18,12 +19,9 @@ public static class Convert
             Time = Timestamp.FromDateTime(chain.Time),
             Type = chain.Type.ToCMsgType(),
             Sender = chain.FriendUin,
-            Destination = chain.TargetUin,
+            Destination = chain.TargetUin
         };
-        if (chain.GroupUin.HasValue)
-        {
-            msg.Group = chain.GroupUin.Value;
-        }
+        if (chain.GroupUin.HasValue) msg.Group = chain.GroupUin.Value;
 
         return msg;
     }
@@ -54,7 +52,7 @@ public static class Convert
         {
             Name = entity.FileName,
             Url = entity.FileUrl,
-            Size = entity.FileSize,
+            Size = entity.FileSize
         };
     }
 
@@ -64,7 +62,7 @@ public static class Convert
         {
             ReplySeq = entity.Sequence,
             ReplyUin = entity.TargetUin,
-            SenderUid = entity.Uid,
+            SenderUid = entity.Uid
         };
     }
 

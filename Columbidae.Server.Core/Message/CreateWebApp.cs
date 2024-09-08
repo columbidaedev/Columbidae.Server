@@ -1,5 +1,4 @@
 using System.Net;
-using Columbidae.Server.Core.PersistentStorage.Models;
 using Columbidae.Server.Core.Preferences.Models;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -47,13 +46,9 @@ public static class CreateWebApp
         {
             listenOptions.Protocols = HttpProtocols.Http2;
             if (server.CertificatePath != null)
-            {
                 listenOptions.UseHttps(server.CertificatePath, server.CertificatePassword);
-            }
             else
-            {
                 listenOptions.UseHttps();
-            }
         }
     }
 }

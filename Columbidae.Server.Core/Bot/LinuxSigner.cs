@@ -9,17 +9,17 @@ namespace Columbidae.Server.Core.Bot;
 
 internal class LinuxSigner : SignProvider
 {
-    private readonly string _url;
     private readonly HttpClient _client = new();
 
 
     private readonly Timer _timer;
+    private readonly string _url;
 
     public LinuxSigner(string signServer)
     {
         _timer = new Timer(_ =>
         {
-            bool reconnect = Available = Test();
+            var reconnect = Available = Test();
             if (reconnect) _timer?.Change(-1, 5000);
         });
         _url = signServer;
@@ -36,7 +36,7 @@ internal class LinuxSigner : SignProvider
         {
             { "cmd", cmd },
             { "seq", seq },
-            { "src", body.Hex() },
+            { "src", body.Hex() }
         };
 
         try

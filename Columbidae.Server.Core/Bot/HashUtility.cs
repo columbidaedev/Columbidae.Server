@@ -15,10 +15,7 @@ internal static class HashUtility
     public static string Hex(this IEnumerable<byte> bytes)
     {
         var sb = new StringBuilder();
-        foreach (var b in bytes)
-        {
-            sb.Append(b.ToString("x2"));
-        }
+        foreach (var b in bytes) sb.Append(b.ToString("x2"));
 
         return sb.ToString();
     }

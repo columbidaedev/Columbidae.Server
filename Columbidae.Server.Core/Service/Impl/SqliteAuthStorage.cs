@@ -6,26 +6,17 @@ namespace Columbidae.Server.Core.Service.Impl;
 
 public class SqliteAuthStorage(string dbPath) : IAuthenticationStorage, IDisposable
 {
-    public bool IsAvailable() => true;
+    private readonly DbContext _dbContext = new(dbPath);
 
-    public int GetPriority() => (int)Math.Log(_dbContext.Devices.Count() + 1);
-
-    private class DbContext(string dbPath) : Microsoft.EntityFrameworkCore.DbContext
+    public bool IsAvailable()
     {
-        public class DeviceToken
-        {
-            public int DeviceTokenId { get; set; }
-            public string Token { get; set; }
-            [Required] public DeviceInfo DeviceInfo { get; set; }
-        }
-
-        public DbSet<DeviceToken> Devices { get; set; }
-
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder) =>
-            optionsBuilder.UseSqlite($"Data Source={dbPath}");
+        return true;
     }
 
-    private readonly DbContext _dbContext = new(dbPath);
+    public int GetPriority()
+    {
+        return (int)Math.Log(_dbContext.Devices.Count() + 1);
+    }
 
     public async Task AddDevice(string token, DeviceInfo device)
     {
@@ -52,5 +43,22 @@ public class SqliteAuthStorage(string dbPath) : IAuthenticationStorage, IDisposa
     public void Dispose()
     {
         _dbContext.Dispose();
+    }
+
+    private class DbContext(string dbPath) : Microsoft.EntityFrameworkCore.DbContext
+    {
+        public DbSet<DeviceToken> Devices { get; }
+
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        {
+            optionsBuilder.UseSqlite($"Data Source={dbPath}");
+        }
+
+        public class DeviceToken
+        {
+            public int DeviceTokenId { get; set; }
+            public string Token { get; set; }
+            [Required] public DeviceInfo DeviceInfo { get; set; }
+        }
     }
 }

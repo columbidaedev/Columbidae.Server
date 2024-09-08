@@ -8,10 +8,7 @@ public static class MessageStorage
     public static void SaveMessage(this Registry<IMessageStorage> context, CMsg message)
     {
         var prioritized = context.GetPrior();
-        if (prioritized == null)
-        {
-            throw new NullReferenceException("No available registry");
-        }
+        if (prioritized == null) throw new NullReferenceException("No available registry");
         prioritized.SaveMessage(message);
     }
 }

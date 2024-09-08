@@ -1,6 +1,5 @@
 using Columbidae.Server.Core.Bot;
 using Columbidae.Server.Core.Message;
-using Columbidae.Server.Core.PersistentStorage.Models;
 using Columbidae.Server.Core.Preferences.Models;
 using Columbidae.Server.Core.Registry;
 using Columbidae.Server.Core.Service;
@@ -11,14 +10,10 @@ namespace Columbidae.Server.Core;
 
 public class ColumbidaeContext
 {
-    public Registry<IBroadcast> Broadcasts { get; } = new(new Logging("Broadcast"));
-    public Registry<IMessageStorage> MessageStorages { get; } = new(new Logging("MessageStorage"));
-    public Registry<IAuthenticationStorage> AuthenticationStorages { get; } = new(new Logging("AuthenticationStorage"));
-    private readonly Logging _logging = new("Context");
     private readonly WebApplication _app;
+    private readonly Logging _logging = new("Context");
 
     public readonly IBot Bot;
-    public bool BotOnline => Bot.Online;
 
     public ColumbidaeContext(ServerModel? server, IBot bot)
     {
@@ -26,6 +21,11 @@ public class ColumbidaeContext
         Bot.Context = this;
         _app = this.CreateWebApplication(server ?? new ServerModel());
     }
+
+    public Registry<IBroadcast> Broadcasts { get; } = new(new Logging("Broadcast"));
+    public Registry<IMessageStorage> MessageStorages { get; } = new(new Logging("MessageStorage"));
+    public Registry<IAuthenticationStorage> AuthenticationStorages { get; } = new(new Logging("AuthenticationStorage"));
+    public bool BotOnline => Bot.Online;
 
     public async Task Login()
     {

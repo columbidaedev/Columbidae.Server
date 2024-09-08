@@ -32,18 +32,13 @@ public class AuthService : Authentication.AuthenticationBase
         else if (_context.BotOnline)
         {
             if (authorized)
-            {
                 await responseStream.WriteAsync(new AuthResult
                 {
                     Finished = true,
                     Forbidden = false,
                     Online = true
                 });
-            }
-            else
-            {
-                // TODO: notify existing devices
-            }
+            // TODO: notify existing devices
         }
         else
         {
@@ -68,10 +63,7 @@ public class AuthService : Authentication.AuthenticationBase
     public override async Task<GetTokenResult> GetToken(DeviceInfo request, ServerCallContext context)
     {
         var token = await Nanoid.GenerateAsync();
-        if (token == null)
-        {
-            throw new NullReferenceException("nanoid gen");
-        }
+        if (token == null) throw new NullReferenceException("nanoid gen");
 
         _unauthorizedDevices[token] = request;
         return new GetTokenResult

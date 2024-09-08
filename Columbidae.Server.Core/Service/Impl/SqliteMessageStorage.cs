@@ -7,18 +7,22 @@ namespace Columbidae.Server.Core.Service.Impl;
 
 public class SqliteMessageStorage(string dbPath) : IMessageStorage, IDisposable
 {
-    public bool IsAvailable() => true;
-    public int GetPriority() => 0;
+    private readonly DbContext _dbContext = new(dbPath);
 
-    private class DbContext(string dbPath) : MessageDbContext
+    public void Dispose()
     {
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        {
-            optionsBuilder.UseSqlite($"Data Source={dbPath}");
-        }
+        _dbContext.Dispose();
     }
 
-    private readonly DbContext _dbContext = new(dbPath);
+    public bool IsAvailable()
+    {
+        return true;
+    }
+
+    public int GetPriority()
+    {
+        return 0;
+    }
 
     public async Task<CMsg?> GetMessage(ulong id)
     {
@@ -47,8 +51,11 @@ public class SqliteMessageStorage(string dbPath) : IMessageStorage, IDisposable
         await _dbContext.Messages.AddAsync(message.ToMessageStore());
     }
 
-    public void Dispose()
+    private class DbContext(string dbPath) : MessageDbContext
     {
-        _dbContext.Dispose();
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        {
+            optionsBuilder.UseSqlite($"Data Source={dbPath}");
+        }
     }
 }

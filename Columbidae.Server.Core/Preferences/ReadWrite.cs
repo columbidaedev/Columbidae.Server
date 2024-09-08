@@ -2,8 +2,15 @@ namespace Columbidae.Server.Core.Preferences;
 
 public class ReadWriteDelegate<T> : IReadWrite<T>
 {
-    public T Value { get; set; }
     private readonly IReadWrite<T> _readWrite;
+
+    public ReadWriteDelegate(IReadWrite<T> readWrite)
+    {
+        _readWrite = readWrite;
+        Value = Read();
+    }
+
+    public T Value { get; set; }
 
     public T Read()
     {
@@ -12,21 +19,15 @@ public class ReadWriteDelegate<T> : IReadWrite<T>
         return value;
     }
 
-    public async Task Write()
-    {
-        await _readWrite.Write(Value);
-    }
-
     public async Task Write(T value)
     {
         Value = value;
         await Write();
     }
 
-    public ReadWriteDelegate(IReadWrite<T> readWrite)
+    public async Task Write()
     {
-        _readWrite = readWrite;
-        Value = Read();
+        await _readWrite.Write(Value);
     }
 }
 

@@ -6,21 +6,18 @@ namespace Columbidae.Server.Preferences;
 public class TomlReadWrite<T>(string filePath) : IFileReadWrite<T>
     where T : class, new()
 {
-    public string FilePath => filePath;
-
     private readonly TomlModelOptions _tomlOptions = new()
     {
         ConvertToModel = (o, type) =>
         {
-            if (type == typeof(Guid) && o is string s)
-            {
-                return Guid.Parse(s);
-            }
+            if (type == typeof(Guid) && o is string s) return Guid.Parse(s);
 
             return null;
         },
         ConvertToToml = o => o is Guid ? o.ToString() : null
     };
+
+    public string FilePath => filePath;
 
 
     public T Read()
@@ -42,8 +39,7 @@ public class TomlReadWrite<T>(string filePath) : IFileReadWrite<T>
     public async Task Write(T value)
     {
         await using var file = new StreamWriter(filePath);
-        await file.WriteAsync(Toml.FromModel(value, options: _tomlOptions));
+        await file.WriteAsync(Toml.FromModel(value, _tomlOptions));
         file.Close();
     }
-
 }

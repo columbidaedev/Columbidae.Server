@@ -1,4 +1,3 @@
-using Columbidae.Server.Core.PersistentStorage;
 using Columbidae.Server.Core.PersistentStorage.Models;
 using Columbidae.Server.Core.Preferences;
 using Columbidae.Server.Core.Preferences.Models;
@@ -8,17 +7,22 @@ namespace Columbidae.Server;
 
 public class Library : ILibrary
 {
-    public ReadWriteDelegate<PreferencesModel> Preferences { get; set; }
-    public ReadWriteDelegate<ServicesModel> Services { get; set; }
+    public Library(IContainer container)
+    {
+        var prefFile = Path.Combine(container.ConfigurationRoot, "preferences.toml");
+        var servicesFile = Path.Combine(container.ConfigurationRoot, "services.toml");
+        Preferences = new ReadWriteDelegate<PreferencesModel>(new TomlReadWrite<PreferencesModel>(prefFile));
+        Services = new ReadWriteDelegate<ServicesModel>(new TomlReadWrite<ServicesModel>(servicesFile));
+    }
 
     public ReadWriteDelegate<BotModel> BotDelegate
     {
         get
         {
             var deg = new InherentReadWrite<BotModel, PreferencesModel>(
-                delegated: new MemoryReadIoWriteDelegate<PreferencesModel>(Preferences),
-                getter: pref => pref.Bot,
-                setter: bot =>
+                new MemoryReadIoWriteDelegate<PreferencesModel>(Preferences),
+                pref => pref.Bot,
+                bot =>
                 {
                     Preferences.Value.Bot = bot;
                     return Preferences.Value;
@@ -34,9 +38,9 @@ public class Library : ILibrary
         get
         {
             var deg = new InherentReadWrite<AccountModel, PreferencesModel>(
-                delegated: new MemoryReadIoWriteDelegate<PreferencesModel>(Preferences),
-                getter: pref => pref.Account,
-                setter: account =>
+                new MemoryReadIoWriteDelegate<PreferencesModel>(Preferences),
+                pref => pref.Account,
+                account =>
                 {
                     Preferences.Value.Account = account;
                     return Preferences.Value;
@@ -46,11 +50,6 @@ public class Library : ILibrary
         }
     }
 
-    public Library(IContainer container)
-    {
-        var prefFile = Path.Combine(container.ConfigurationRoot, "preferences.toml");
-        var servicesFile = Path.Combine(container.ConfigurationRoot, "services.toml");
-        Preferences = new ReadWriteDelegate<PreferencesModel>(new TomlReadWrite<PreferencesModel>(prefFile));
-        Services = new ReadWriteDelegate<ServicesModel>(new TomlReadWrite<ServicesModel>(servicesFile));
-    }
+    public ReadWriteDelegate<PreferencesModel> Preferences { get; set; }
+    public ReadWriteDelegate<ServicesModel> Services { get; set; }
 }

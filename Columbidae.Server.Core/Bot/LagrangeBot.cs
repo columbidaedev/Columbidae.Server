@@ -2,7 +2,6 @@ using System.Diagnostics;
 using System.Globalization;
 using System.Threading.Channels;
 using Columbidae.Server.Core.Message;
-using Columbidae.Server.Core.PersistentStorage.Models;
 using Columbidae.Server.Core.Preferences;
 using Columbidae.Server.Core.Preferences.Models;
 using Columbidae.Server.Core.Registry;
@@ -16,20 +15,17 @@ namespace Columbidae.Server.Core.Bot;
 
 public class LagrangeBot : IBot
 {
-    public bool Online { get; private set; }
-    public ChannelReader<string> LoginUrl => _loginUrlChan.Reader;
-    public ColumbidaeContext? Context { get; set; }
-
-    private readonly Logging _logging = new("LagrangeBot");
+    private readonly ReadWriteDelegate<AccountModel> _accountDelegate;
     private readonly BotContext _bot;
     private readonly ReadWriteDelegate<BotModel> _botDelegate;
-    private readonly ReadWriteDelegate<AccountModel> _accountDelegate;
     private readonly string _cacheRoot;
+
+    private readonly Logging _logging = new("LagrangeBot");
 
     private readonly Channel<string> _loginUrlChan = Channel.CreateBounded<string>(new BoundedChannelOptions(1)
     {
         SingleWriter = true,
-        SingleReader = false,
+        SingleReader = false
     });
 
     public LagrangeBot(string cacheRoot, ReadWriteDelegate<BotModel> botDelegate,
@@ -50,12 +46,13 @@ public class LagrangeBot : IBot
         _accountDelegate = accountDelegate;
     }
 
+    public bool Online { get; private set; }
+    public ChannelReader<string> LoginUrl => _loginUrlChan.Reader;
+    public ColumbidaeContext? Context { get; set; }
+
     public async Task Initialize()
     {
-        if (Online)
-        {
-            return;
-        }
+        if (Online) return;
 
         _bot.Invoker.OnBotOnlineEvent += async (_, ev) =>
         {
@@ -81,23 +78,26 @@ public class LagrangeBot : IBot
 
         _bot.Invoker.OnBotLogEvent += (_, @event) =>
         {
-            _logging.Delegated.Log(logLevel: @event.Level.ToMsLevel(), eventId: new EventId(),
-                message: @event.EventMessage);
+            _logging.Delegated.Log(@event.Level.ToMsLevel(), new EventId(),
+                @event.EventMessage);
         };
 
         var account = _accountDelegate.Value;
         if (account.Uin != 0 && _botDelegate.Value.Keystore?.Uin == account.Uin)
         {
             var succeeded = await _bot.LoginByPassword();
-            if (!succeeded)
-            {
-                await LoginViaQr();
-            }
+            if (!succeeded) await LoginViaQr();
         }
         else
         {
             await LoginViaQr();
         }
+    }
+
+    public Task Shutdown()
+    {
+        _bot.Dispose();
+        return Task.CompletedTask;
     }
 
     private async Task LoginViaQr()
@@ -124,11 +124,5 @@ public class LagrangeBot : IBot
             await _bot.LoginByQrCode();
             _logging.Delegated.LogDebug("Scan returned");
         }
-    }
-
-    public Task Shutdown()
-    {
-        _bot.Dispose();
-        return Task.CompletedTask;
     }
 }
