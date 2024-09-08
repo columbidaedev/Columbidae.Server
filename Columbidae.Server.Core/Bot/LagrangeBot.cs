@@ -73,9 +73,9 @@ public class LagrangeBot : IBot
 
         _bot.Invoker.OnFriendMessageReceived += async (_, @event) =>
         {
-            Context.MessageStorages.SaveMessage(@event.Chain.ToCMsg());
+            Context?.MessageStorages.SaveMessage(@event.Chain.ToCMsg());
             await Task.WhenAll(
-                Context.Broadcasts.GetAll().Select(b => b.OnMessage(@event.Chain.ToCMsg(), @event.EventTime)));
+                Context?.Broadcasts.GetAll().Select(b => b.OnMessage(@event.Chain.ToCMsg(), @event.EventTime)) ?? []);
         };
 
         _bot.Invoker.OnBotLogEvent += (_, @event) =>
