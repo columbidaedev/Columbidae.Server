@@ -1,8 +1,6 @@
 using Columbidae.Server.Core.Bot;
-using Columbidae.Server.Core.Message;
 using Columbidae.Server.Core.Registry;
 using Columbidae.Server.Core.Service;
-using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Logging;
 
 namespace Columbidae.Server.Core;
@@ -16,7 +14,6 @@ public class ColumbidaeContext : IAsyncDisposable
     public ColumbidaeContext(IBot bot)
     {
         Bot = bot;
-        Bot.Context = this;
     }
 
     public Registry<IBroadcast> Broadcasts { get; } = new(new Logging("Broadcast"));
@@ -27,7 +24,7 @@ public class ColumbidaeContext : IAsyncDisposable
     public async Task Initialize()
     {
         _logging.Delegated.LogInformation("Signing into {bot}", Bot.GetType().Name);
-        await Bot.Initialize();
+        await Bot.Initialize(this);
     }
 
     public async ValueTask DisposeAsync()

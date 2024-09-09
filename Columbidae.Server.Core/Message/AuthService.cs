@@ -1,5 +1,6 @@
 using Columbidae.Auth;
 using Columbidae.Server.Core.Registry;
+using Columbidae.Server.Core.Service.Helper;
 using Grpc.Core;
 using NanoidDotNet;
 using Authentication = Columbidae.Auth.Authentication;

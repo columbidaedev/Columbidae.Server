@@ -14,6 +14,6 @@ await using var context = new ColumbidaeContext(bot);
 context.Broadcasts.MaybeRegister(library.Services.Value.Fcm);
 context.AuthenticationStorages.RegisterOrUseSqlite(library.Services.Value.Database, container);
 
-_ = context.Initialize();
 await using var app = context.CreateWebApplication(library.Preferences.Value.Server);
+_ = context.Initialize();
 await app.RunAsync();

@@ -5,6 +5,7 @@ using Columbidae.Server.Core.Message;
 using Columbidae.Server.Core.Preferences;
 using Columbidae.Server.Core.Preferences.Models;
 using Columbidae.Server.Core.Registry;
+using Columbidae.Server.Core.Service.Helper;
 using Lagrange.Core;
 using Lagrange.Core.Common;
 using Lagrange.Core.Common.Interface;
@@ -48,9 +49,8 @@ public class LagrangeBot : IBot
 
     public bool Online { get; private set; }
     public ChannelReader<string> LoginUrl => _loginUrlChan.Reader;
-    public ColumbidaeContext? Context { get; set; }
 
-    public async Task Initialize()
+    public async Task Initialize(ColumbidaeContext context)
     {
         if (Online) return;
 
@@ -71,9 +71,8 @@ public class LagrangeBot : IBot
 
         _bot.Invoker.OnFriendMessageReceived += async (_, @event) =>
         {
-            Context?.MessageStorages.SaveMessage(@event.Chain.ToCMsg());
-            await Task.WhenAll(
-                Context?.Broadcasts.GetAll().Select(b => b.OnMessage(@event.Chain.ToCMsg(), @event.EventTime)) ?? []);
+            await context.MessageStorages.SaveMessage(@event.Chain.ToCMsg());
+            await context.Broadcasts.BroadcastToAll(@event.Chain.ToCMsg(), @event.EventTime);
         };
 
         _bot.Invoker.OnBotLogEvent += (_, @event) =>

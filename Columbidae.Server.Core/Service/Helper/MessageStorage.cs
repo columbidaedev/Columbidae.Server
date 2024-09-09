@@ -1,14 +1,14 @@
-using Columbidae.Server.Core.Service;
+using Columbidae.Server.Core.Registry;
 using CMsg = Columbidae.Message.Message;
 
-namespace Columbidae.Server.Core.Registry;
+namespace Columbidae.Server.Core.Service.Helper;
 
 public static class MessageStorage
 {
-    public static void SaveMessage(this Registry<IMessageStorage> context, CMsg message)
+    public static async Task SaveMessage(this Registry<IMessageStorage> context, CMsg message)
     {
         var prioritized = context.GetPrior();
         if (prioritized == null) throw new NullReferenceException("No available registry");
-        prioritized.SaveMessage(message);
+        await prioritized.SaveMessage(message);
     }
 }

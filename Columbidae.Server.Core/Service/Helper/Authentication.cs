@@ -1,7 +1,7 @@
 using Columbidae.Auth;
-using Columbidae.Server.Core.Service;
+using Columbidae.Server.Core.Registry;
 
-namespace Columbidae.Server.Core.Registry;
+namespace Columbidae.Server.Core.Service.Helper;
 
 public static class Authentication
 {
