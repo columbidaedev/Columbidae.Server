@@ -1,10 +1,10 @@
 using System.Diagnostics;
 using System.Globalization;
 using System.Threading.Channels;
+using Columbidae.Message;
 using Columbidae.Server.Core.Message;
 using Columbidae.Server.Core.Preferences;
 using Columbidae.Server.Core.Preferences.Models;
-using Columbidae.Server.Core.Registry;
 using Columbidae.Server.Core.Service.Helper;
 using Lagrange.Core;
 using Lagrange.Core.Common;
@@ -17,6 +17,7 @@ namespace Columbidae.Server.Core.Bot;
 public class LagrangeBot : IBot
 {
     private readonly ReadWriteDelegate<AccountModel> _accountDelegate;
+    private readonly ColumbidaeContext _context;
     private readonly BotContext _bot;
     private readonly ReadWriteDelegate<BotModel> _botDelegate;
     private readonly string _cacheRoot;
@@ -29,7 +30,7 @@ public class LagrangeBot : IBot
         SingleReader = false
     });
 
-    public LagrangeBot(string cacheRoot, ReadWriteDelegate<BotModel> botDelegate,
+    public LagrangeBot(ColumbidaeContext context, string cacheRoot, ReadWriteDelegate<BotModel> botDelegate,
         ReadWriteDelegate<AccountModel> accountDelegate)
     {
         Enum.TryParse(botDelegate.Value.Protocol, true, out Protocols botProtocol);
@@ -45,12 +46,13 @@ public class LagrangeBot : IBot
         _cacheRoot = cacheRoot;
         _botDelegate = botDelegate;
         _accountDelegate = accountDelegate;
+        _context = context;
     }
 
     public bool Online { get; private set; }
     public ChannelReader<string> LoginUrl => _loginUrlChan.Reader;
 
-    public async Task Initialize(ColumbidaeContext context)
+    public async Task Initialize()
     {
         if (Online) return;
 
@@ -71,8 +73,8 @@ public class LagrangeBot : IBot
 
         _bot.Invoker.OnFriendMessageReceived += async (_, @event) =>
         {
-            await context.MessageStorages.SaveMessage(@event.Chain.ToCMsg());
-            await context.Broadcasts.BroadcastToAll(@event.Chain.ToCMsg(), @event.EventTime);
+            await _context.MessageStorages.SaveMessage(@event.Chain.ToCMsg());
+            await _context.Broadcasts.BroadcastToAll(@event.Chain.ToCMsg(), @event.EventTime);
         };
 
         _bot.Invoker.OnBotLogEvent += (_, @event) =>
@@ -91,6 +93,17 @@ public class LagrangeBot : IBot
         {
             await LoginViaQr();
         }
+    }
+
+    public async Task SendMessage(MessageCreator creator)
+    {
+        var chain = await creator.GetMessageChain(_context, _bot);
+        var msg = chain.ToCMsg();
+        await Task.WhenAll(
+            _bot.SendMessage(chain),
+            _context.MessageStorages.SaveMessage(msg)
+        );
+        await _context.Broadcasts.BroadcastToAll(msg, DateTime.Now);
     }
 
     public Task Shutdown()

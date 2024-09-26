@@ -8,6 +8,5 @@ namespace Columbidae.Server.Core.Service;
 public interface IMessageStorage : IRegisterable
 {
     public Task<CMsg?> GetMessage(ulong id);
-    public Task StreamResource(IAsyncStreamWriter<Chunk> writer, ulong frameId, ResourceType type);
     public Task SaveMessage(CMsg message);
 }

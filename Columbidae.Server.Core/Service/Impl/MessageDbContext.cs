@@ -40,9 +40,9 @@ public abstract class MessageDbContext : DbContext
         public DateTime Time { get; set; }
         public List<FrameStoreBase> Frames { get; set; }
         public CMsg.Types.MessageType Type { get; set; }
-        public ulong SenderId { get; set; }
-        public ulong DestinationId { get; set; }
-        public ulong? GroupId { get; set; }
+        public uint SenderId { get; set; }
+        public uint DestinationId { get; set; }
+        public uint? GroupId { get; set; }
 
         public IEnumerable<Frame> GetFrames()
         {

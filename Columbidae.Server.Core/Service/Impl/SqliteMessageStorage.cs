@@ -41,11 +41,6 @@ public class SqliteMessageStorage(string dbPath) : IMessageStorage, IDisposable
         return store.ToMessage();
     }
 
-    public async Task StreamResource(IAsyncStreamWriter<Chunk> writer, ulong frameId, ResourceType type)
-    {
-        throw new NotImplementedException();
-    }
-
     public async Task SaveMessage(CMsg message)
     {
         await _dbContext.Messages.AddAsync(message.ToMessageStore());

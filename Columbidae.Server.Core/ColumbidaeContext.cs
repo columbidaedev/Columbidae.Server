@@ -9,26 +9,30 @@ public class ColumbidaeContext : IAsyncDisposable
 {
     private readonly Logging _logging = new("Context");
 
-    public readonly IBot Bot;
-
-    public ColumbidaeContext(IBot bot)
-    {
-        Bot = bot;
-    }
+    public IBot? Bot { get; set; }
 
     public Registry<IBroadcast> Broadcasts { get; } = new(new Logging("Broadcast"));
     public Registry<IMessageStorage> MessageStorages { get; } = new(new Logging("MessageStorage"));
+    public Registry<IMessageCache> MessageCaches { get; } = new(new Logging("MessageCache"));
     public Registry<IAuthenticationStorage> AuthenticationStorages { get; } = new(new Logging("AuthenticationStorage"));
-    public bool BotOnline => Bot.Online;
+    public bool BotOnline => Bot?.Online == true;
 
     public async Task Initialize()
     {
+        if (Bot == null)
+        {
+            return;
+        }
         _logging.Delegated.LogInformation("Signing into {bot}", Bot.GetType().Name);
-        await Bot.Initialize(this);
+        await Bot.Initialize();
     }
 
     public async ValueTask DisposeAsync()
     {
+        if (Bot == null)
+        {
+            return;
+        }
         await Bot.Shutdown();
     }
 }

@@ -5,8 +5,6 @@ namespace Columbidae.Server.Core.Message;
 
 public class ImService(ColumbidaeContext columbidaeContext) : InstantMessage.InstantMessageBase
 {
-    private readonly ColumbidaeContext _columbidaeContext = columbidaeContext;
-
     public override async Task<SendMessageReply> SendMessage(Columbidae.Message.Message request,
         ServerCallContext context)
     {
